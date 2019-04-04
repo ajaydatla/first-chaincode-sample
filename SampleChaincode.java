@@ -37,7 +37,11 @@ public class SampleChaincode extends ChaincodeBase {
             if (func.equals("query")) {
                 return query(stub, params.get(0));
             }
-            return newErrorResponse("Invalid invoke function name. Expecting one of: [\"invoke\", \"delete\", \"query\"]");
+            if (func.equals("addName")) {
+                return addName(stub, params.get(0), params.get(1));
+            }
+            
+            return newErrorResponse("Invalid invoke function name. Expecting one of: "+params.get(1));
         } catch (Throwable e) {
             return newErrorResponse(e);
         }
@@ -48,9 +52,14 @@ public class SampleChaincode extends ChaincodeBase {
         return newSuccessResponse(val, ByteString.copyFrom(val, UTF_8).toByteArray());
     }
 	
+	private Response addName(ChaincodeStub stub, String key, String value) {
+		stub.putStringState(key, value);
+        return newSuccessResponse(key + " with value "+value+" Added Successfully!!");
+    }
+	
 	public static void main(String[] args) {
         System.out.println("OpenSSL avaliable: " + OpenSsl.isAvailable());
-        new SimpleChaincode().start(args);
+        new SampleChaincode().start(args);
     }
 
 
