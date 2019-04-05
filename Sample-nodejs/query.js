@@ -1,5 +1,16 @@
 'use strict';
 
+const yaml = require('js-yaml');
+const { Gateway } = require('fabric-network');
+
+const connectionProfile = yaml.safeLoad(fs.readFileSync('../gateway/paperNet.yaml', 'utf8'));
+
+const gateway = new Gateway();
+
+await gateway.connect(connectionProfile, connectionOptions);
+
+//Json config
+
 const { FileSystemWallet, Gateway } = require('fabric-network');
 const fs = require('fs');
 const path = require('path');
