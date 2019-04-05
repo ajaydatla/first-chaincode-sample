@@ -50,7 +50,7 @@ var queryChaincode = async function(peer, channelName, chaincodeName, args, fcn,
 
 async function main() {
     console.log('calling queryChaincode');
-    queryChaincode();
+    queryChaincode('peer0','mychannel','myfabcar','123','queryCar','User1','org1');
 }
 
 main();
