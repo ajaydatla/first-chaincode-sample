@@ -53,3 +53,5 @@ public class SimpleChaincode extends ChaincodeBase {
     }
 
 }
+
+//peer chaincode install -n javacc -v 1.1 -l java -p /opt/gopath/src/github.com/chaincode/chaincode_example02/javasample/
