@@ -53,3 +53,13 @@ public class SimpleChaincode extends ChaincodeBase {
     }
 
 }
+
+//peer chaincode install -n javacc -v 1.0 -l java -p /opt/gopath/src/github.com/chaincode/chaincode_example02/javasample/
+
+//peer chaincode instantiate -o orderer.example.com:7050 --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C mychannel -n javacc -l java -v 1.0 -c '{"Args":[]}' -P "OR ('Org1MSP.peer','Org2MSP.peer')"
+
+//peer chaincode query -C $CHANNEL_NAME -n javacc -c '{"Args":["query","name1"]}' 
+
+//peer chaincode upgrade -C mychannel  -n jafjjfvacc -v 1.1 -c '{"Args":[""]}' -p /opt/gopath/src/github.com/chaincode/chaincode_example02/javasample/ -o orderer.example.com:7050
+
+//peer chaincode invoke -o orderer.example.com:7050 --tls true --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C mychannel -n javacc --peerAddresses peer0.org1.example.com:7051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --peerAddresses peer0.org2.example.com:7051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt -c '{"Args":["addName","name3","Vinod"]}'
