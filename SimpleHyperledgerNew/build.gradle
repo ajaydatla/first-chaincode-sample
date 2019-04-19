@@ -31,6 +31,5 @@ shadowJar {
 
     manifest {
         attributes 'Main-Class': 'org.hf.SimpleChaincode'
-        attributes 'Main-Class': 'org.hf.CountryName'
     }
 }
