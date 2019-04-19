@@ -152,6 +152,10 @@ class CountryName extends ChaincodeBase{
 	      return newSuccessResponse(val, ByteString.copyFrom(val, UTF_8).toByteArray());
 	}
 	
+	public static void main(String[] args) {
+        System.out.println("OpenSSL avaliable: " + OpenSsl.isAvailable());
+        new CountryName().start(args);
+    }
 }
 
 //peer chaincode install -n javacc -v 1.0 -l java -p /opt/gopath/src/github.com/chaincode/chaincode_example02/javasample/
