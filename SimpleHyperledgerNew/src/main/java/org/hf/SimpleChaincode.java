@@ -2,11 +2,20 @@ package org.hf;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 import org.hyperledger.fabric.shim.ChaincodeBase;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.protobuf.ByteString;
 
 import io.netty.handler.ssl.OpenSsl;
@@ -36,6 +45,9 @@ public class SimpleChaincode extends ChaincodeBase {
             if (func.equals("query")) {
                 return query(stub, params.get(0));
             }
+            if (func.equals("putCountry")) {
+            	return putCountry(stub, params.get(0));
+            }
             return newErrorResponse("Invalid invoke function name. Expecting one of: [\"invoke\", \"delete\", \"query\"]");
         } catch (Throwable e) {
             return newErrorResponse(e);
@@ -46,6 +58,30 @@ public class SimpleChaincode extends ChaincodeBase {
         String val	= stub.getStringState(arg);
         return newSuccessResponse(val, ByteString.copyFrom(val, UTF_8).toByteArray());
     }
+	
+	private Response putCountry(ChaincodeStub stub, String arg) throws IOException {
+
+		StringBuilder result = new StringBuilder();
+		URL url = new URL("http://services.groupkt.com/country/get/iso2code/"+arg);
+		HttpURLConnection con = (HttpURLConnection) url.openConnection();
+		con.setRequestMethod("GET");
+		BufferedReader rd = new BufferedReader(new InputStreamReader(con.getInputStream()));
+	      String line;
+	      while ((line = rd.readLine()) != null) {
+	         result.append(line);
+	      }
+	      rd.close();
+	      
+	      String jsonRes = result.toString();
+	      Gson gson = new Gson();
+	      JsonObject json = gson.fromJson(jsonRes, JsonObject.class);
+	      JsonElement jsonEle = json.get("RestResponse").getAsJsonObject().get("result").getAsJsonObject().get("alpha3_code");
+	      String finalResult = jsonEle.getAsString();
+//	      System.out.println(finalResult);
+	      stub.putStringState(arg, finalResult);
+	      String val = "Successful update country for "+arg;
+	      return newSuccessResponse(val, ByteString.copyFrom(val, UTF_8).toByteArray());
+	}
 	
 	public static void main(String[] args) {
         System.out.println("OpenSSL avaliable: " + OpenSsl.isAvailable());
