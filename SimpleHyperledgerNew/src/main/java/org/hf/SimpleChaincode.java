@@ -89,6 +89,70 @@ public class SimpleChaincode extends ChaincodeBase {
     }
 
 }
+class CountryName extends ChaincodeBase{
+
+	@Override
+	public Response init(ChaincodeStub stub) {
+		try {
+
+			stub.putStringState("prod1", "IphoneX");
+			stub.putStringState("prod2", "Pixel3");
+
+			return newSuccessResponse();
+		} catch (Throwable e) {
+			return newErrorResponse(e);
+		}
+	}
+
+	@Override
+	public Response invoke(ChaincodeStub stub) {
+        try {
+           
+            String func = stub.getFunction();
+            List<String> params = stub.getParameters();
+            
+            if (func.equals("queryCountry")) {
+                return queryCountry(stub, params.get(0));
+            }
+            if (func.equals("saveCountry")) {
+            	return saveCountry(stub, params.get(0));
+            }
+            return newErrorResponse("Invalid invoke function name. Expecting one of: [\"invoke\", \"delete\", \"query\"]");
+        } catch (Throwable e) {
+            return newErrorResponse(e);
+        }
+    }
+	
+	private Response queryCountry(ChaincodeStub stub, String arg) {
+        String val	= stub.getStringState(arg);
+        return newSuccessResponse(val, ByteString.copyFrom(val, UTF_8).toByteArray());
+    }
+	
+	private Response saveCountry(ChaincodeStub stub, String arg) throws IOException {
+
+		StringBuilder result = new StringBuilder();
+		URL url = new URL("http://services.groupkt.com/country/get/iso2code/"+arg);
+		HttpURLConnection con = (HttpURLConnection) url.openConnection();
+		con.setRequestMethod("GET");
+		BufferedReader rd = new BufferedReader(new InputStreamReader(con.getInputStream()));
+	      String line;
+	      while ((line = rd.readLine()) != null) {
+	         result.append(line);
+	      }
+	      rd.close();
+	      
+	      String jsonRes = result.toString();
+	      Gson gson = new Gson();
+	      JsonObject json = gson.fromJson(jsonRes, JsonObject.class);
+	      JsonElement jsonEle = json.get("RestResponse").getAsJsonObject().get("result").getAsJsonObject().get("name");
+	      String finalResult = jsonEle.getAsString();
+//	      System.out.println(finalResult);
+	      stub.putStringState(arg, finalResult);
+	      String val = "Successful updated country name for "+arg;
+	      return newSuccessResponse(val, ByteString.copyFrom(val, UTF_8).toByteArray());
+	}
+	
+}
 
 //peer chaincode install -n javacc -v 1.0 -l java -p /opt/gopath/src/github.com/chaincode/chaincode_example02/javasample/
 

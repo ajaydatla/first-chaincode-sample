@@ -27,9 +27,9 @@ public class TestWS {
 	      String jsonRes = result.toString();
 	      Gson gson = new Gson();
 	      JsonObject json = gson.fromJson(jsonRes, JsonObject.class);
-	      JsonElement jsonEle = json.get("RestResponse").getAsJsonObject().get("result").getAsJsonObject().get("alpha3_code");
+	      JsonElement jsonEle = json.get("RestResponse").getAsJsonObject().get("result").getAsJsonObject().get("name");
 	      String finalResult = jsonEle.getAsString();
-//	      System.out.println(finalResult);
+	      System.out.println(finalResult);
 	      
 	}
 
